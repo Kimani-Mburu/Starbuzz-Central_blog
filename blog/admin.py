@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from blog.models import Profile, Post, Tag, Comment, Category
 
 
@@ -8,10 +7,18 @@ from blog.models import Profile, Post, Tag, Comment, Category
 class ProfileAdmin(admin.ModelAdmin):
     model = Profile
 
+
+# Categories model
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    model = Category
+
+
 # Tag model
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     model = Tag
+
 
 # Post model
 @admin.register(Post)
@@ -19,41 +26,40 @@ class PostAdmin(admin.ModelAdmin):
     model = Post
 
     list_display = (
-        "id",
+        "post_id",
         "title",
-        "subtitle",
         "slug",
-        "publish_date",
-        "published",
+        "status",
+        "category",
+        "publication_date",
+        "is_featured",
     )
     list_filter = (
-        "published",
-        "publish_date",
+        "status",
+        "category",
+        "publication_date",
+        "is_featured",
     )
     list_editable = (
         "title",
-        "subtitle",
         "slug",
-        "publish_date",
-        "published",
+        "status",
+        "category",
+        "publication_date",
+        "is_featured",
     )
     search_fields = (
         "title",
-        "subtitle",
         "slug",
-        "body",
+        "post_content",
     )
     prepopulated_fields = {
-        "slug": (
-            "title",
-            "subtitle",
-        )
+        "slug": ("title",)
     }
-    date_hierarchy = "publish_date"
-    save_on_top = True
+    date_hierarchy = "publication_date"
 
-#Comment model
 
+# Comment model
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     model = Comment

@@ -1,7 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
-from ckeditor.fields import RichTextField
+from django.urls import reverse
 from django.utils.text import slugify
+from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
+from versatileimagefield.fields import VersatileImageField
+from django.contrib.auth.models import User
 
 # Models for the blog site(Starbuzz-Central)
 
@@ -33,27 +36,46 @@ class Tag(models.Model):
         return self.name
 
 # The actual post content
-
+STATUS_CHOICES = (('published', 'Published'), ('draft', 'Draft'),)
 class Post(models.Model):
-    class Meta:
-        ordering = ["-publish_date"]
+    post_id = models.BigAutoField(primary_key=True)
+    title = models.CharField(max_length=255, verbose_name='Title')
+    slug = models.SlugField(max_length=250, unique=True, allow_unicode=True, blank=True, null=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='status', default='draft')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Category')
+    publication_date = models.DateTimeField(verbose_name='Created')
+    picture = VersatileImageField(
+        upload_to='blog-uploads/%Y/', height_field='height', width_field='width',
+        blank=True,
+        null=True,
+        verbose_name='Picture as thumbnail'
+    )
+    height = models.PositiveIntegerField('Profile Image Height', blank=True, null=True)
+    width = models.PositiveIntegerField('Profile Image Width', blank=True, null=True)
+    picture_description = models.CharField(max_length=127, verbose_name="description of the image", null=False)
+    post_excerpt = RichTextField(verbose_name="post excerpt")
+    post_content = RichTextUploadingField(null=False, verbose_name="post content")
+    is_featured = models.BooleanField(verbose_name="Is the post feature or not?", default=False)
+    author = models.CharField(max_length=64, default='Anonymous', verbose_name='Created by')
+    tags = models.ManyToManyField(Tag)
+    views = models.PositiveIntegerField(default=0)
 
-    title = models.CharField(max_length=255, unique=True)
-    subtitle = models.CharField(max_length=255, blank=True)
-    slug = models.SlugField(max_length=255, unique=True)
-    body = RichTextField()
-    meta_description = models.CharField(max_length=150, blank=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    publish_date = models.DateTimeField(blank=True, null=True)
-    published = models.BooleanField(default=False)
-
-    author = models.ForeignKey(Profile, on_delete=models.PROTECT)
-    tags = models.ManyToManyField(Tag, blank=True)
+    def increment_views(self):
+        self.views += 1
+        self.save(update_fields=['views'])
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)  # Autogenerate the slug from the title
+        self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+
+    def date_published(self):
+        return self.publication_date.strftime("%B %d, %Y %H:%M")
+
+    def get_category(self):
+        return self.category.title
+
+    def get_absolute_url(self):
+        return reverse('article_details', args=[self.slug])
 
     def __str__(self):
         return self.title

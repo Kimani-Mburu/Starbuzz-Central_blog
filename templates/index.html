@@ -1,0 +1,57 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html>
+    {% load static %}
+<head>
+    <title>Homepage</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Welcome to the Homepage</h1>
+
+    <h2>Latest Posts</h2>
+    <div class="post-container">
+        {% for post in latest_posts %}
+            <div class="post-card">
+                <h3 class="post-title">{{ post.title }}</h3>
+                <p class="post-excerpt">{{ post.post_excerpt }}</p>
+                <p class="post-meta">Published: {{ post.date_published }} | Author: {{ post.author }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <h2>Categories</h2>
+    <div class="category-container">
+        {% for category in categories %}
+            <div class="category-card">
+                <h3 class="category-title">{{ category.title }}</h3>
+            </div>
+        {% endfor %}
+    </div>
+
+    <h2>Most Viewed Posts</h2>
+    <div class="post-container">
+        {% for post in most_viewed_posts %}
+            <div class="post-card">
+                <h3 class="post-title">{{ post.title }}</h3>
+                <p class="post-excerpt">{{ post.post_excerpt }}</p>
+                <p class="post-meta">Views: {{ post.views }} | Published: {{ post.date_published }} | Author: {{ post.author }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <h2>Featured Posts</h2>
+    <div class="post-container">
+        {% for post in featured_posts %}
+            <div class="post-card">
+                <h3 class="post-title">{{ post.title }}</h3>
+                <p class="post-excerpt">{{ post.post_excerpt }}</p>
+                <p class="post-meta">Published: {{ post.date_published }} | Author: {{ post.author }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
