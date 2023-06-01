@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blog.models import Profile, Post, Tag, Comment, Category
+from blog.models import Advert, Profile, Post, Tag, Comment, Category
 
 
 # Profile model
@@ -63,3 +63,9 @@ class PostAdmin(admin.ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     model = Comment
+
+
+@admin.register(Advert)
+class AdvertAdmin(admin.ModelAdmin):
+    list_display = ['title', 'ad_type', 'link']
+    list_filter = ['ad_type']

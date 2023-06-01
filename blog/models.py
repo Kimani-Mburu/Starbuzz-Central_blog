@@ -35,6 +35,9 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('tag_articles', args=[self.id])
+
 # The actual post content
 STATUS_CHOICES = (('published', 'Published'), ('draft', 'Draft'),)
 class Post(models.Model):
@@ -56,7 +59,7 @@ class Post(models.Model):
     post_excerpt = RichTextField(verbose_name="post excerpt")
     post_content = RichTextUploadingField(null=False, verbose_name="post content")
     is_featured = models.BooleanField(verbose_name="Is the post feature or not?", default=False)
-    author = models.CharField(max_length=64, default='Anonymous', verbose_name='Created by')
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
     views = models.PositiveIntegerField(default=0)
 
@@ -69,13 +72,13 @@ class Post(models.Model):
         super().save(*args, **kwargs)
 
     def date_published(self):
-        return self.publication_date.strftime("%B %d, %Y %H:%M")
+        return self.publication_date.strftime("%B %d, %Y")
 
     def get_category(self):
         return self.category.title
 
     def get_absolute_url(self):
-        return reverse('article_details', args=[self.slug])
+        return reverse('article_details', args=[self.pk])
 
     def __str__(self):
         return self.title
@@ -90,3 +93,20 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.author.username} on {self.post.title}'
+
+
+class Advert(models.Model):
+    AD_TYPES = (
+        ('GIF', 'GIF'),
+        ('IMAGE', 'Image'),
+        ('VIDEO', 'Video'),
+    )
+    
+    title = models.CharField(max_length=100)
+    ad_type = models.CharField(max_length=10, choices=AD_TYPES)
+    file = models.FileField(upload_to='advertisements/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    link = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return self.title
