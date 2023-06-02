@@ -77,8 +77,11 @@ class Post(models.Model):
     def get_category(self):
         return self.category.title
 
-    def get_absolute_url(self):
-        return reverse('article_details', args=[self.pk])
+    def get_article_url(self):
+        return reverse('article_details', args=[self.id])
+    
+    def comment_count(self):
+        return self.comments.count()
 
     def __str__(self):
         return self.title

@@ -32,10 +32,13 @@ def home_view(request):
     # Get all tags
     tags = Tag.objects.all()
 
- # Retrieve the advertisement
-    advert = Advert.objects.first()  # Get the first advertisement 
+    # Retrieve the latest advertisement
+    advert = Advert.objects.latest('created_at')
 
     all_posts = Post.objects.all()
+
+    #All categories
+    categories = Category.objects.all()
     
 
 
@@ -49,16 +52,16 @@ def home_view(request):
         'feature_posts':feature_posts,
         'tags':tags,
         'advert':advert,  
-        'all_posts':all_posts
+        'all_posts':all_posts,
+        'categories':categories
     }
 
     return render(request, 'index.html', context)
 
 # Create a comment
-
 @login_required
 def create_comment(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+    post = get_object_or_404(Post, post_id=post_id)
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -74,17 +77,44 @@ def create_comment(request, post_id):
         'form': form,
         'post': post,
     }
-    return render(request, 'create_comment.html', context)
+    return render(request, 'single.html', context)
 
 # Article details view
 
-def article_detail(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+def article_details(request, post_id):
+    # Retrieve the post
+    post = get_object_or_404(Post, post_id=post_id)
+    #Retrieve the comments
     comments = post.comments.all()
+    # Retrieve the latest advertisement
+    advert = Advert.objects.latest('created_at')
+    #2 Lates posts
+    breaking = Post.objects.filter(status='published').order_by('-publication_date')[:2]
+
+    # Get the latest 4 published posts
+    latest_posts = Post.objects.filter(status='published').order_by('-publication_date')[:4]
+
+    # Get the latest 3 published posts for the carousel
+    carousel_posts = Post.objects.filter(status='published').order_by('-publication_date')[:3]
+
+    # Get all tags
+    tags = Tag.objects.all()
+
+    #All categories
+    categories = Category.objects.all()
+
+    # Increment the views count for the post
+    post.increment_views()
 
     context = {
         'post': post,
         'comments': comments,
+        'advert': advert,
+        'breaking':breaking,
+        'latest_posts':latest_posts,
+        'tags':tags, 
+        'carousel_posts':carousel_posts,
+        'categories':categories,
     }
     return render(request, 'single.html', context)
 
@@ -102,3 +132,19 @@ def tag_articles_view(request, tag_id):
     }
 
     return render(request, 'tag_articles.html', context)
+
+
+# Category view
+
+def categories_view(request):
+    # Retrieve all categories
+    categories = Category.objects.all()
+
+    context = {
+        'categories': categories
+    }
+
+    return render(request, 'category.html', context)
+
+def contact(request):
+    return render(request, 'contact.html')
