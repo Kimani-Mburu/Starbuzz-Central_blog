@@ -131,7 +131,7 @@ def tag_articles_view(request, tag_id):
         'articles': articles
     }
 
-    return render(request, 'tag_articles.html', context)
+    return render(request, 'category.html', context)
 
 
 # Category view

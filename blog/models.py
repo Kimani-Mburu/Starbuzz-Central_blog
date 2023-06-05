@@ -23,6 +23,10 @@ class Profile(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=250, unique=True, allow_unicode=True, blank=True, null=True)
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
