@@ -1,3 +1,4 @@
+altgraph==0.17.3
 aniso8601==9.0.1
 asgiref==3.6.0
 certifi==2023.5.7
@@ -25,6 +26,8 @@ pilkit==2.0
 Pillow==9.5.0
 promise==2.3
 pycparser==2.21
+pyinstaller==5.11.0
+pyinstaller-hooks-contrib==2023.3
 PyJWT==2.7.0
 python-magic==0.4.27
 python3-openid==3.2.0
