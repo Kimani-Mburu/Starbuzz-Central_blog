@@ -1,22 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <!-- News With Sidebar Start -->
-    
+    <!-- Contact Start -->
     <div class="container-fluid mt-5 pt-3">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
                     <div class="row">
-                        
                         <div class="col-12">
                             <div class="section-title">
-                                <h4 class="m-0 text-uppercase font-weight-bold">Tag: {{ tag.name }}</h4>
+                                <h4 class="m-0 text-uppercase font-weight-bold">Search Results for "{{ keyword }}"</h4>
                                 <a class="text-secondary font-weight-medium text-decoration-none" href="">|</a>
                             </div>
                         </div>
-                        
-                        {% for post in articles %}
+                        {% for post in posts %}
                         
                         <div class="col-lg-6">
                             <div class="position-relative mb-3">
@@ -25,9 +22,9 @@
                                     <div class="mb-2">
                                         <a class="badge badge-primary text-uppercase font-weight-semi-bold p-2 mr-2"
                                             href="">{{ post.category }}</a>
-                                        <a class="text-body" href=""><small>{{post.date_published}}</small></a>
+                                        <a class="text-body" href="{% url 'blog:article_details' post.post_id %}"><small>{{post.date_published}}</small></a>
                                     </div>
-                                    <a class="h4 d-block mb-3 text-secondary text-uppercase font-weight-bold" href="">{{post.title}}</a>
+                                    <a class="h4 d-block mb-3 text-secondary text-uppercase font-weight-bold" href="{% url 'blog:article_details' post.post_id %}">{{post.title}}</a>
                                     <p class="m-0">{{post.post_excerpt | safe }}</p>
                                 </div>
                                 <div class="d-flex justify-content-between bg-white border border-top-0 p-4">
@@ -42,8 +39,11 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        {% endfor %}
+                                         {% empty %}
+                                       <li>No results found.</li>
+                                         {% endfor %}
+                       
+
 
                     </div>
                 </div>
@@ -83,58 +83,6 @@
                     </div>
                     <!-- Social Follow End -->
 
-                    <!-- Ads Start -->
-                    <div class="mb-3">
-                        <div class="section-title mb-0">
-                            <h4 class="m-0 text-uppercase font-weight-bold">Advertisement</h4>
-                        </div>
-                        <div class="bg-white text-center border border-top-0 p-3">
-                            {% if advert.ad_type == 'GIF' %}
-                            <!-- Render GIF -->
-                            <img class="img-fluid" src="{{ advert.file.url }}" alt="{{ advert.title }}">
-                             {% elif advert.ad_type == 'IMAGE' %}
-                            <!-- Render Image -->
-                            <img class="img-fluid" src="{{ advert.file.url }}" alt="{{ advert.title }}">
-                             {% elif advert.ad_type == 'VIDEO' %}
-                            <!-- Render Video -->
-                            <video class="img-fluid" src="{{ advert.file.url }}" controls auto></video>
-                             {% endif %}
-                
-                             {% if advert.link %}
-                            <!-- Link to the advertisement -->
-                            <p></p>
-                            <a class="badge badge-primary text-uppercase font-weight-semi-bold p-2 mr-2"
-                                            href="{{ advert.link }}">Click Here</a>
-                             {% endif %}
-                        </div>
-                    </div>
-                    <!-- Ads End -->
-
-                    <!-- Popular News Start -->
-                    <div class="mb-3">
-                        <div class="section-title mb-0">
-                            <h4 class="m-0 text-uppercase font-weight-bold">Latest News</h4>
-                        </div>
-                        <div class="bg-white border border-top-0 p-3">
-                            <div class="bg-white border border-top-0 p-3">
-                                {% for post in latest_posts %}
-                                <div class="d-flex align-items-center bg-white mb-3" style="height: 110px;">
-                                
-                                    <div class="w-100 h-100 px-3 d-flex flex-column justify-content-center border border-left-0">
-                                        <div class="mb-2">
-                                            <a class="badge badge-primary text-uppercase font-weight-semi-bold p-1 mr-2" href="">{{post.category}}</a>
-                                            <a class="text-body" href=""><small>{{post.date_published}}</small></a>
-                                        </div>
-                                        <a class="h6 m-0 text-secondary text-uppercase font-weight-bold" href="">{{post.title}}</a>
-                                        <a class="text-body" href=""><small>Author: {{post.author}}</small></a>
-                                    </div>
-                                </div>
-                                {% endfor%}
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Popular News End -->
-
                     <!-- Newsletter Start -->
                     <div class="mb-3">
                         <div class="section-title mb-0">
@@ -152,10 +100,11 @@
                         </div>
                     </div>
                     <!-- Newsletter End -->
-
                 </div>
             </div>
         </div>
     </div>
-    <!-- News With Sidebar End -->
-    {% endblock %}
+    <!-- Contact End -->
+
+
+{% endblock %}

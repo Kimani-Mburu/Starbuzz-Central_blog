@@ -1,5 +1,6 @@
 from django.contrib import admin
-from blog.models import Advert, Profile, Post, Tag, Comment, Category
+from django.db.models import Count
+from blog.models import Advert, Profile, Post, SearchHistory, Tag, Comment, Category
 
 
 # Profile model
@@ -35,6 +36,7 @@ class PostAdmin(admin.ModelAdmin):
         "is_featured",
     )
     list_filter = (
+        "views",
         "status",
         "category",
         "publication_date",
@@ -69,3 +71,22 @@ class CommentAdmin(admin.ModelAdmin):
 class AdvertAdmin(admin.ModelAdmin):
     list_display = ['title', 'ad_type', 'link']
     list_filter = ['ad_type']
+
+class TopSearchKeywordFilter(admin.SimpleListFilter):
+    title = 'Top Search Keywords'
+    parameter_name = 'top_search_keyword'
+
+    def lookups(self, request, model_admin):
+        top_keywords = SearchHistory.objects.values('query').annotate(count=Count('query')).order_by('-count')[:5]
+        return [(kw['query'], kw['query']) for kw in top_keywords]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(keyword=self.value())
+        return queryset
+
+class SearchHistoryAdmin(admin.ModelAdmin):
+    list_display = ('user', 'query', 'timestamp')
+    list_filter = (TopSearchKeywordFilter, 'user', 'timestamp')
+
+admin.site.register(SearchHistory, SearchHistoryAdmin)

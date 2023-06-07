@@ -38,9 +38,21 @@
                     <li class="nav-item border-right border-secondary">
                         <a class="nav-link text-body small" href="{% url 'blog:contact' %}">Contact</a>
                     </li>
+                    {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link text-body small" href="#">Login</a>
+                        <a class="nav-link text-body small" href="{% url 'blog:profile' %}">My Profile</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-body small" href="{% url 'blog:logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link text-body small" href="{% url 'blog:login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-body small" href="{% url 'blog:account_signup' %}">Sign Up</a>
+                    </li>
+                {% endif %}
                 </ul>
             </nav>
         </div>
@@ -76,7 +88,7 @@
             </a>
         </div>
         <div class="col-lg-8 text-center text-lg-right">
-            {% comment %} <a href="https://htmlcodex.com"><img class="img-fluid" src="{% static 'img/ads-728x90.png'%}" alt=""></a> {% endcomment %}
+           
         </div>
     </div>
 </div>
@@ -95,24 +107,28 @@
         <div class="collapse navbar-collapse justify-content-between px-0 px-lg-3" id="navbarCollapse">
             <div class="navbar-nav mr-auto py-0">
                 <a href="{% url 'blog:home' %}" class="nav-item nav-link active">Home</a>
-                <a href="{% url 'blog:categories' %}" class="nav-item nav-link">Category</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Categories</a>
+                <a href="{% url 'blog:categories' %}" class="nav-item nav-link">Categories</a>
+                <a href="{% url 'blog:profile' %}" class="nav-item nav-link">My profile</a>
+
+                {% comment %} <div class="nav-item dropdown">
+                    <a href="{% url 'blog:categories' %}" class="nav-link dropdown-toggle" data-toggle="dropdown">Categories</a>
                     <div class="dropdown-menu rounded-0 m-0">
                         {% for category in categories%}
                         <a href="" class="dropdown-item">{{category.name}} </a>
                         {% endfor %}
                     </div>
-                </div>
-                <a href="{% url 'blog:contact' %}" class="nav-item nav-link">Contact</a>
+                </div> {% endcomment %}
+                <a href="{% url 'blog:contact' %}" class="nav-item nav-link">Contact Info</a>
             </div>
-            <div class="input-group ml-auto d-none d-lg-flex" style="width: 100%; max-width: 300px;">
-                <input type="text" class="form-control border-0" placeholder="Keyword">
-                <div class="input-group-append">
-                    <button class="input-group-text bg-primary text-dark border-0 px-3"><i
-                            class="fa fa-search"></i></button>
+            <form method="POST" action="{% url 'blog:search_results' %}">
+                {% csrf_token %}
+                <div class="input-group ml-auto d-none d-lg-flex" style="width: 100%; max-width: 300px;">
+                    <input type="text" class="form-control border-0" placeholder="Keyword" name="keyword">
+                    <div class="input-group-append">
+                        <button class="input-group-text bg-primary text-dark border-0 px-3" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </nav>
 </div>

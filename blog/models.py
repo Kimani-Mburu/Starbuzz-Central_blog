@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+import imagekit.models.fields
 from django.utils.text import slugify
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -14,7 +15,13 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT)
     bio = models.TextField(blank=True)
     website = models.URLField(blank=True)
-    profile_image = models.ImageField(upload_to='profile_images', blank=True)
+    profile_image = imagekit.models.fields.ProcessedImageField(
+        upload_to='profile_images',
+        processors=[imagekit.processors.ResizeToFit(800, 600)],
+        format='JPEG',
+        options={'quality': 90},
+        blank=True
+    )
 
     def __str__(self):
         return self.user.username
@@ -51,8 +58,11 @@ class Post(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='status', default='draft')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Category')
     publication_date = models.DateTimeField(verbose_name='Created')
-    picture = VersatileImageField(
-        upload_to='blog-uploads/%Y/', height_field='height', width_field='width',
+    picture = imagekit.models.fields.ProcessedImageField(
+        upload_to='blog-uploads/%Y/',
+        processors=[imagekit.processors.ResizeToFit(800, 600)],
+        format='JPEG',
+        options={'quality': 90},
         blank=True,
         null=True,
         verbose_name='Picture as thumbnail'
@@ -72,7 +82,9 @@ class Post(models.Model):
         self.save(update_fields=['views'])
 
     def save(self, *args, **kwargs):
+        # Generate the slug using slugify
         self.slug = slugify(self.title)
+
         super().save(*args, **kwargs)
 
     def date_published(self):
@@ -95,7 +107,7 @@ class Post(models.Model):
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField()
+    message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -117,3 +129,13 @@ class Advert(models.Model):
 
     def __str__(self):
         return self.title
+    
+
+  
+class SearchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    query = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.query

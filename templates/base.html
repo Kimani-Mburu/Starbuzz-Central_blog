@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
     {% load static %}
+    {% load compress %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +13,14 @@
     <meta content="Free HTML Templates" name="keywords">
     <meta content="Free HTML Templates" name="description">
     <link href="{% static 'img/user.jpg' %}" rel="icon">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+    {% compress css %}
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
     {% block extra_stylesheets %}{% endblock %}
+    {% endcompress %}
 </head>
 <body>
     <!-- Navigation Bar -->
